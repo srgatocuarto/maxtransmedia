@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max - Transmedia</title>
+    <style>
+
+        * {
+             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color: #7B8F96;
+            font-family: 'Roboto', sans-serif;
+        }
+        #main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #5D6E76;
+            color: white;
+            z-index: 100;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+        }
+
+        #main-nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        #main-nav li {
+            margin: 0 15px;
+        }
+
+        #main-nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            transition: color 0.3s;
+            font-size: 1.1em;
+        }
+
+        #main-nav a:hover {
+            color: #ddd;
+        }
+        #image-container {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+
+        #image-container {
+            margin-top: 20px;
+            display: flex;             /* Cambiado a flex */
+            flex-direction: row;      /* Añadido para que los elementos se dispongan en fila */
+            align-items: flex-start;  /* Alinea los elementos en la parte superior */
+            width: 90%;
+            max-width: 1200px;        /* Aumentado el ancho máximo para acomodar el texto */
+            box-sizing: border-box;
+            gap: 20px;               /* Espacio entre el visor y el cuadro de texto */
+}
+
+        #image-and-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60%;          /* Ocupa el 60% del contenedor padre */
+        }
+
+        #text-box {
+            width: 50%;          /* Ocupa el 40% del contenedor padre */
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        #image-placeholder {
+            width: 100%;
+            height: 700px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Asegura que las imágenes no se desborden */
+            position: relative; /* Para posicionar los controles */
+            display: flex;        /* Para centrar la imagen dentro del contenedor */
+            justify-content: center;
+            align-items: center;
+        }
+
+        #image-placeholder img {
+            max-width: 100%;  /* La imagen no debe ser más ancha que el contenedor */
+            max-height: 100%; /* La imagen no debe ser más alta que el contenedor */
+            object-fit: contain;  /* Mantiene la proporción y se ajusta al contenedor */
+            transition: opacity 0.5s; /* Transición para la animación de opacidad */
+        }
+
+        #image-placeholder img.hidden {
+            opacity: 0;
+        }
+
+        #status-message {
+            margin-top: 10px;
+            font-size: 1em;
+            color: #333;
+        }
+
+        #image-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+            gap: 10px; /* Espacio entre botones y selector */
+        }
+
+        #prev-button, #next-button {
+            background-color: rgba(83, 83, 83, 0.1); /* Menos opaco que el botón de inicio */
+            color: rgb(0, 0, 0);
+            border: 1px solid white;
+            padding: 10px 20px;
+            margin-top: 0px;
+            font-size: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #prev-button:hover, #next-button:hover {
+            background-color: #4b4a4a;
+        }
+
+        #page-selector {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 80px; /* Ajusta el ancho según sea necesario */
+            text-align: center;
+        }
+        #page-selector:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+    </style>
+</head>
+<body>
+    <nav id="main-nav">
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="histo.html">Historia transmedia</a></li>
+            <li><a href="podcast.html">Relato sonoro</a></li>
+            <li><a href="libro.html">Libro Interactivo</a></li>
+            <li><a href="credits.html">Créditos</a></li>
+        </ul>
+    </nav>
+
+    <div id="text-box">
+        <p>
+            <h3>Descripción del libro</h3>
+            El e-book Cicatrices Invisibles narra la historia de Max, un perro mutilado, permitiendo al lector tomar decisiones que alteran el curso del relato. Con múltiples desenlaces, promueve la empatía y reflexión sobre el bienestar animal. Su formato interactivo integra ilustraciones y opciones visuales que enriquecen la experiencia. La narrativa no lineal transforma la lectura en una exploración activa y profunda.
+            
+        </p>
+    </div>
+
+    <div id="image-container">
+        <div id="image-placeholder">
+            <iframe width="100%" height="100%" src="assets/libro.pdf" allowfullscreen></iframe>
+        </div>  
+    </div>
+
+    
+</body>
+</html>

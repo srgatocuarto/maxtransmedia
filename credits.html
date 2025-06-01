@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créditos</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #2A4B3F; 
+            color: #fff;             
+            height: 100vh;
+            margin: 0;
+        }
+        .credits-section {
+            margin-bottom: 20px;
+        }
+        .back-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        /* Nuevo estilo para los nombres y los iconos */
+        .credit-name {
+            display: flex; /* Permite que el nombre y el icono estén en la misma línea */
+            align-items: center; /* Alinea verticalmente el nombre y el icono */
+            justify-content: center; /* Centra el contenido si la p es un bloque */
+            margin-bottom: 5px; /* Espacio entre los nombres */
+        }
+        .credit-name img {
+            width: 20px; /* Tamaño del icono */
+            height: 20px;
+            margin-left: 8px; /* Espacio entre el nombre y el icono */
+            vertical-align: middle; /* Alineación vertical */
+        }
+    </style>
+</head>
+<body>
+    <h1>Créditos del Proyecto</h1>
+    <div class="credits-section">
+        <h2>Integrantes</h2>
+        <p class="credit-name">Laura Hormaza Velasco</p>
+        <p class="credit-name">Gina Alexandra Llorente Cuastumal</p>
+        <p class="credit-name">Yamith Legarda</p>
+        <p class="credit-name">Josue Daniel Meneses Muñoz</p>
+        <p class="credit-name">Giovanny Felipe Burbano Villota</p>
+    </div>
+    <div class="credits-section">
+        <h2>Ilustración, diagramación editorial y edicion de audio</h2>
+        <p class="credit-name">Laura Hormaza Velasco</p>
+        <p class="credit-name">Yamith Legarda</p>
+    </div>
+    <div class="credits-section">
+        <h2>Edición de video y animación</h2>
+        <p class="credit-name">Gina Alexandra Llorente Cuastumal</a></p>
+        <p class="credit-name">Josue Daniel Meneses Muñoz <a href="#"><img src="assets/icons/instagram-icon.png" alt="Instagram"></a>@matchassd</p>
+    </div>
+    <div class="credits-section">
+        <h2>Desarrollo y programación web</h2>
+        <p class="credit-name">Giovanny Felipe Burbano Villota<a href="#"><img src="assets/icons/instagram-icon.png" alt="Instagram"></a>@srgatocuarto </p>
+    </div>
+    <button class="back-button" onclick="window.location.href='index.html'">Volver al Inicio</button>
+</body>
+</html>

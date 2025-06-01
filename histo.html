@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max - Transmedia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <nav id="story-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="histo.html">Historia transmedia</a></li>
+                <li><a href="podcast.html">Relato sonoro</a></li>
+                <li><a href="libro.html">Libro interactivo</a></li>
+                <li><a href="credits.html">Créditos</a></li>
+            </ul>
+        </nav>
+        <div id="intro-screen">
+            <div class="logo">Relato audiovisual no lineal</div>
+            <div class="tagline">
+                El espacio audiovisual interactivo transforma al espectador en protagonista, permitiéndole tomar decisiones que modifican la historia en tiempo real. Mediante videos, gráficos y otros recursos, se crea una experiencia inmersiva y emocional. Este formato fomenta la creatividad y la conexión con el relato. Al integrar múltiples medios, se construye un universo narrativo expandido. Así, el usuario deja de observar y comienza a influir activamente en el desarrollo de la historia.
+</div>
+            <button id="start-button">COMENZAR</button>
+            <button id="credits-button">Atrás</button>
+        </div>
+
+        <div id="video-container" class="video-container">
+            <video id="video-placeholder" width="100%" height="100%" autoplay playsinline></video>
+        </div>
+        <div id="choices-container"></div>
+
+        <svg id="timer" viewBox="0 0 100 100">
+            <circle class="timer-circle timer-background" cx="50" cy="50" r="45"></circle>
+            <circle class="timer-circle timer-progress" cx="50" cy="50" r="45"></circle>
+        </svg>
+
+        <div id="status-text">Cargando...</div>
+    </div>
+
+    
+
+    <script src="script.js"></script>
+</body>
+</html>
