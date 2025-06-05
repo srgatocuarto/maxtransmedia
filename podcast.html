@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Max - Transmedia</title>
+    <title>Max - Transmedia (Relato Sonoro Local)</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body {
             display: flex;
@@ -22,7 +21,7 @@
             position: relative;
         }
 
-        /* Estilos de la barra de navegación */
+        /* Estilos de la barra de navegación (mantener los mismos de style.css o incrustarlos si es necesario) */
         #main-nav {
             position: fixed;
             top: 0;
@@ -88,7 +87,7 @@
         }
 
         #portada {
-            background-image: url('/assets/portada.jpg');
+            background-image: url('assets/portada.jpg');
             background-size: contain;
             background-repeat: no-repeat;
             align-items: center;
@@ -230,7 +229,8 @@
             height: 100%;
             background-color: rgba(255, 255, 255, 0.3);
             pointer-events: none;
-            transition: width 0.1s linear;
+            /* La transición se puede manejar con JavaScript para mayor suavidad */
+            /* transition: width 0.1s linear; */
         }
 
         h1 {
@@ -282,7 +282,7 @@
         <ul>
             <li><a href="index.html">Inicio</a></li>
             <li><a href="histo.html">Historia transmedia</a></li>
-            <li><a href="podcast.html">Relato Sonoro</a></li>
+            <li><a href="podcast-alternativo.html">Relato Sonoro</a></li>
             <li><a href="libro.html">Libro interactivo</a></li>
             <li><a href="credits.html">Créditos</a></li>
         </ul>
@@ -290,7 +290,8 @@
     <section id="podcast-section">
         <div id="player-container">
             <div id="custom-audio-player">
-                <div id="portada">  
+                <div id="portada">
+                    <audio id="podcast-audio" src="assets/audio.mp3" preload="auto"></audio>
                 </div>
                 <div id="waveform-container">
                     <canvas id="waveform-canvas"></canvas>
@@ -310,7 +311,7 @@
             <h2>Descripción del Relato Lineal</h2>
             <p>
                 El relato en audio da voz a Max, un perro que narra con crudeza y emoción su experiencia de mutilación. Su historia, íntima y desgarradora, conecta al oyente con su dolor y pensamiento. A través de sonidos, pausas y entonación, se crea una atmósfera profunda y conmovedora. Es la puerta de entrada al universo narrativo, despertando empatía y conciencia.
-                
+
             </p>
         </div>
     </section>
@@ -325,35 +326,67 @@
         const waveformContext = waveformCanvas.getContext('2d');
         const progressCanvas = document.getElementById('progress-canvas');
 
-        const audioContext = new AudioContext();
-        const gainNode = audioContext.createGain();
-        gainNode.connect(audioContext.destination);
+        const podcastAudioElement = document.getElementById('podcast-audio');
+
+        // NO usaremos AudioContext para la reproducción básica o el volumen en este enfoque
+        // porque es lo que parece estar causando conflictos en file://
+        // Simplemente controlaremos el elemento <audio> directamente.
 
         let isPlaying = false;
-        let audioBuffer;
-        let podcastSource;
         let animationFrameId;
 
         waveformCanvas.width = waveformContainer.clientWidth;
         waveformCanvas.height = waveformContainer.clientHeight;
 
-        function drawWaveform(buffer) {
+        // La función drawWaveform se hará de forma "dummy" o se cargará de forma menos confiable
+        // ya que `fetch` puede ser bloqueado en file:// para el ArrayBuffer.
+        // Podrías pre-generar una imagen del waveform si es esencial para file://
+        // Para este ejemplo, haremos un waveform simple o lo omitiremos si fetch falla.
+        function drawWaveform(buffer = null) {
             waveformContext.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
             waveformContext.fillStyle = '#fff';
             waveformContext.beginPath();
 
-            const data = buffer.getChannelData(0);
-            const step = Math.ceil(data.length / waveformCanvas.width);
-            let x = 0;
-
-            for (let i = 0; i < data.length; i += step) {
-                const y = (waveformCanvas.height / 2) * (1 + data[i]);
-                waveformContext.lineTo(x, y);
-                x++;
+            if (buffer) {
+                const data = buffer.getChannelData(0);
+                const step = Math.ceil(data.length / waveformCanvas.width);
+                let x = 0;
+                for (let i = 0; i < data.length; i += step) {
+                    const y = (waveformCanvas.height / 2) * (1 + data[i]);
+                    waveformContext.lineTo(x, y);
+                    x++;
+                }
+                waveformContext.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+            } else {
+                // Dibujar un waveform de relleno si no se puede cargar el buffer real
+                waveformContext.moveTo(0, waveformCanvas.height / 2);
+                waveformContext.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+                for (let i = 0; i < waveformCanvas.width; i += 20) {
+                    waveformContext.moveTo(i, waveformCanvas.height / 2 - 10);
+                    waveformContext.lineTo(i, waveformCanvas.height / 2 + 10);
+                }
             }
-            waveformContext.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
             waveformContext.stroke();
         }
+
+        // Intentar dibujar el waveform cuando los metadatos estén cargados
+        // Esto usará `fetch` que puede fallar en file://, pero no detendrá la reproducción
+        podcastAudioElement.addEventListener('loadedmetadata', async () => {
+            updateAudioDuration(0, podcastAudioElement.duration);
+            try {
+                // Intentar cargar para el waveform, pero si falla, no es crítico para la reproducción
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const response = await fetch('assets/audio.mp3');
+                const arrayBuffer = await response.arrayBuffer();
+                const decodedAudio = await audioContext.decodeAudioData(arrayBuffer);
+                drawWaveform(decodedAudio);
+                console.log("Waveform dibujado exitosamente.");
+            } catch (error) {
+                console.warn("No se pudo cargar el audio para el waveform en file://. Dibujando waveform de relleno.", error);
+                drawWaveform(); // Dibujar el waveform de relleno
+            }
+        });
+
 
         function updateAudioDuration(currentTime, duration) {
             const formatTime = (seconds) => {
@@ -369,84 +402,74 @@
             progressCanvas.style.width = `${progress}%`;
         }
 
-        function animateWaveform() {
-            if (!isPlaying || !podcastSource) return;
+        function animateProgressBar() { // Renombrado de animateWaveform a animateProgressBar
+            if (!isPlaying) return;
 
-            const currentTime = audioContext.currentTime - podcastSource.startTime;
-            updateAudioDuration(currentTime, audioBuffer.duration);
-            updateProgressBar(currentTime, audioBuffer.duration);
+            const currentTime = podcastAudioElement.currentTime;
+            const duration = podcastAudioElement.duration;
 
-            animationFrameId = requestAnimationFrame(animateWaveform);
+            updateAudioDuration(currentTime, duration);
+            updateProgressBar(currentTime, duration);
+
+            animationFrameId = requestAnimationFrame(animateProgressBar);
         }
 
-        playPauseButton.addEventListener('click', () => {
+        playPauseButton.addEventListener('click', async () => {
             if (isPlaying) {
-                audioContext.suspend();
+                podcastAudioElement.pause();
                 playPauseButton.textContent = '▶';
                 cancelAnimationFrame(animationFrameId);
             } else {
-                if (!audioBuffer) {
-                    fetch('/assets/audio.mp3')
-                        .then(response => response.arrayBuffer())
-                        .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-                        .then(decodedAudio => {
-                            audioBuffer = decodedAudio;
-                            drawWaveform(audioBuffer);
-
-                            podcastSource = audioContext.createBufferSource();
-                            podcastSource.buffer = audioBuffer;
-                            podcastSource.loop = true;
-                            podcastSource.connect(gainNode);
-                            podcastSource.start(0, 0);
-                            podcastSource.startTime = audioContext.currentTime;
-
-                            audioContext.resume();
-                            playPauseButton.textContent = '⏸';
-                            isPlaying = true;
-                            animateWaveform();
-                        })
-                        .catch(error => console.error('Error al cargar el audio:', error));
-                } else {
-                    if (audioContext.state === 'suspended') {
-                        audioContext.resume();
-                    }
-                    podcastSource = audioContext.createBufferSource();
-                    podcastSource.buffer = audioBuffer;
-                    podcastSource.loop = true;
-                    podcastSource.connect(gainNode);
-                    podcastSource.start(0, audioContext.currentTime - podcastSource.startTime);
-                    animateWaveform();
+                try {
+                    await podcastAudioElement.play();
                     playPauseButton.textContent = '⏸';
                     isPlaying = true;
+                    animateProgressBar(); // Iniciar animación de la barra
+                } catch (error) {
+                    console.error("Error al intentar reproducir el audio. Esto podría ser por política de autoplay:", error);
+                    alert("La reproducción de audio fue bloqueada por el navegador. Por favor, haz clic en el botón de play de nuevo.");
+                    isPlaying = false; // Asegurar el estado correcto
+                    playPauseButton.textContent = '▶';
                 }
             }
-            isPlaying = !isPlaying;
+        });
+
+        // Actualizar el progreso y la duración a medida que el audio avanza
+        podcastAudioElement.addEventListener('timeupdate', () => {
+            if (isPlaying) { // Solo actualiza si está reproduciendo activamente
+                updateAudioDuration(podcastAudioElement.currentTime, podcastAudioElement.duration);
+                updateProgressBar(podcastAudioElement.currentTime, podcastAudioElement.duration);
+            }
+        });
+
+        // Control para cuando el audio termina
+        podcastAudioElement.addEventListener('ended', () => {
+            isPlaying = false;
+            playPauseButton.textContent = '▶';
+            cancelAnimationFrame(animationFrameId);
+            updateProgressBar(0, podcastAudioElement.duration);
+            updateAudioDuration(0, podcastAudioElement.duration);
+            podcastAudioElement.currentTime = 0; // Reiniciar a 0
         });
 
         waveformContainer.addEventListener('click', (event) => {
-            if (!audioBuffer) return;
-
-            const clickPosition = event.offsetX / waveformContainer.clientWidth;
-            const seekTime = clickPosition * audioBuffer.duration;
-
-            if (podcastSource) {
-                podcastSource.stop();
+            if (!podcastAudioElement.duration) {
+                console.warn("Audio no cargado aún. No se puede buscar.");
+                return;
             }
 
-            podcastSource = audioContext.createBufferSource();
-            podcastSource.buffer = audioBuffer;
-            podcastSource.loop = true;
-            podcastSource.connect(gainNode);
-            podcastSource.startTime = audioContext.currentTime - seekTime;
-            podcastSource.start(0, seekTime);
-            animateWaveform();
-            audioContext.resume();
-            playPauseButton.textContent = '⏸';
-            isPlaying = true;
+            const clickPosition = event.offsetX / waveformContainer.clientWidth;
+            const seekTime = clickPosition * podcastAudioElement.duration;
+
+            podcastAudioElement.currentTime = seekTime; // Establece el tiempo de reproducción
+
+            if (!isPlaying) { // Si no estaba reproduciendo, iniciar después del seek
+                playPauseButton.click(); // Simula un click para iniciar la reproducción
+            }
         });
 
         volumeSlider.addEventListener('input', () => {
-            gainNode.gain.value = volumeSlider.value;
+            podcastAudioElement.volume = volumeSlider.value; // Controla el volumen directamente en el elemento <audio>
             if (volumeSlider.value == 0) {
                 volumeIcon.textContent = '🔇';
             } else if (volumeSlider.value < 0.5) {
@@ -455,6 +478,11 @@
                 volumeIcon.textContent = '🔊';
             }
         });
+
+        // Inicializar el waveform con un dibujo de relleno al cargar la página
+        // mientras se intenta cargar el real.
+        drawWaveform();
+
     </script>
 </body>
 </html>
